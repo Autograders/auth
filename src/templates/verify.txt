@@ -1,0 +1,13 @@
+Hi,
+
+Please verify your email <%= email %> address by clicking the confirmation button below, if
+that doesn't work, copy and paste the link in your browser:
+
+<%= url %>
+
+If you didn't ask to verify this address, you can ignore this email.
+Also if you have any questions, just reply to this email—we're always happy to help out.
+
+Cheers,
+
+Autograders Team
