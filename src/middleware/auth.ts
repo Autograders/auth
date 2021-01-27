@@ -13,7 +13,7 @@ import { NextFunction, Request, Response } from 'express';
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req.cookies.refresh_token) {
+    if (!req.headers.authorization) {
       res.sendStatus(401);
     } else {
       next();
@@ -32,19 +32,17 @@ async function validate(req: Request, res: Response, next: NextFunction) {
  */
 async function checkToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const { refresh_token } = req.cookies;
-    const data = jwt.verify(refresh_token, constants.JWT_REFRESH_SECRET) as any;
+    const authorization = req.headers.authorization as string;
+    const data = jwt.verify(authorization, constants.JWT_SECRET) as any;
     const { id, key } = data;
     const user = await User.findById(id);
     if (!user || user.key !== key) {
-      res.clearCookie('refresh_token');
       res.sendStatus(403);
     } else {
       req.body.user = user;
       next();
     }
   } catch (error) {
-    res.clearCookie('refresh_token');
     res.sendStatus(403);
   }
 }
@@ -60,13 +58,11 @@ async function isAdmin(req: Request, res: Response, next: NextFunction) {
   try {
     const admin = req.body.user.admin;
     if (!admin) {
-      res.clearCookie('refresh_token');
       res.sendStatus(403);
     } else {
       next();
     }
   } catch (error) {
-    res.clearCookie('refresh_token');
     res.sendStatus(403);
   }
 }
