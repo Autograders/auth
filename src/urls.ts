@@ -6,5 +6,7 @@ export default {
   /** Something went wrong  */
   SOMETHING_WENT_WRONG: '',
   /** Verify url */
-  VERIFY: ''
+  VERIFY: '',
+  /** API url */
+  API: process.env.NODE_ENV === 'production' ? 'https://api.autograders.org' : 'http://localhost:5000'
 };

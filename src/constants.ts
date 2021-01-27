@@ -11,8 +11,6 @@ export default {
   IS_PROD: process.env.NODE_ENV === 'production',
   /** Domain*/
   DOMAIN: process.env.NODE_ENV === 'production' ? '.autograders.org' : 'http://localhost:3000',
-  /** API domain */
-  API: process.env.NODE_ENV === 'production' ? 'https://api.autograders.org' : 'http://localhost:5000',
   /** Password complexity */
   PASSWORD_COMPLEXITY: {
     min: 8,
