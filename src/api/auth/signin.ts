@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import constants from '../../constants';
 import passwordComplexity from 'joi-password-complexity';
 
-import { IUser, User, Token } from '../../models';
+import { IUser, User } from '../../models';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -12,7 +12,6 @@ import { NextFunction, Request, Response } from 'express';
  */
 const schema = Joi.object({
   email: Joi.string().email().required(),
-  keepMeSigned: Joi.boolean().default(false),
   password: passwordComplexity(constants.PASSWORD_COMPLEXITY)
 }).required();
 
@@ -25,10 +24,9 @@ const schema = Joi.object({
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
   try {
-    const data = await schema.validateAsync(req.body);
+    await schema.validateAsync(req.body);
     const email = req.body.email.toLowerCase();
     if (email.endsWith(constants.EMAIL_DOMAIN)) {
-      req.body.keepMeSigned = data.keepMeSigned;
       next();
     } else {
       res.status(400).json({ message: `Only '${constants.EMAIL_DOMAIN}' emails allowed` });
@@ -92,25 +90,11 @@ async function createTokens(req: Request, res: Response) {
   try {
     const user = req.body.user as IUser;
     const email = req.body.email as string;
-    const keepMeSigned = req.body.keepMeSigned as boolean;
     const id = user.id;
-    const data = { id, email };
+    const data = { id, email, key: user.key };
     // create jwts
-    const tokenSecret = process.env.JWT_SECRET as string;
-    const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
-    const token = jwt.sign(data, tokenSecret, { expiresIn: constants.TOKEN_TIME });
-    let refreshToken = '';
-    // save refresh token in DB
-    if (keepMeSigned) {
-      refreshToken = jwt.sign(data, refreshSecret, { expiresIn: constants.REFRESH_TOKEN_TIME_EXT });
-    } else {
-      refreshToken = jwt.sign(data, refreshSecret, { expiresIn: constants.REFRESH_TOKEN_TIME });
-    }
-    // create DB token
-    const dbToken = new Token();
-    dbToken.email = email;
-    dbToken.token = refreshToken;
-    await dbToken.save();
+    const token = jwt.sign(data, constants.JWT_SECRET, { expiresIn: constants.TOKEN_TIME });
+    const refreshToken = jwt.sign(data, constants.JWT_REFRESH_SECRET, { expiresIn: constants.REFRESH_TOKEN_TIME });
     // set refresh token cookie
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.status(200).json({ access_token: token });

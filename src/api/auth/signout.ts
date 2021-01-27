@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import constants from '../../constants';
 
-import { Token } from '../../models';
+import { v4 } from 'uuid';
+import { User } from '../../models';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -33,9 +35,8 @@ async function validate(req: Request, res: Response, next: NextFunction) {
 async function checkToken(req: Request, res: Response, next: NextFunction) {
   try {
     const { refresh_token } = req.cookies;
-    const refreshSecret = process.env.JWT_REFRESH_SECRET as string;
-    const data = jwt.verify(refresh_token, refreshSecret) as any;
-    req.body.data = { id: data.id, email: data.email };
+    const data = jwt.verify(refresh_token, constants.JWT_REFRESH_SECRET) as any;
+    req.body.id = data.id;
     next();
   } catch (error) {
     res.clearCookie('refresh_token');
@@ -51,13 +52,13 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
  */
 async function signOut(req: Request, res: Response) {
   try {
-    const { refresh_token } = req.cookies;
-    const { data, allDevices = false } = req.body;
-    const { email } = data;
+    const { id, allDevices = false } = req.body;
+    // sign out in all devices ?
     if (allDevices) {
-      await Token.deleteMany({ email });
-    } else {
-      await Token.deleteOne({ email, token: refresh_token });
+      // invalidate tokens by changing user key
+      const user = await User.findById(id);
+      user.key = v4();
+      await user.save();
     }
     res.clearCookie('refresh_token');
     res.status(200).json({ message: 'Sign out successfully' });

@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import { v4 } from 'uuid';
+
 /**
  * User interface.
  */
@@ -14,6 +16,8 @@ export interface IUser extends mongoose.Document {
   verified: boolean;
   /** User is admin */
   admin: boolean;
+  /** User current auth key */
+  key: string;
 }
 
 /**
@@ -41,6 +45,10 @@ export const User = mongoose.model<IUser>(
     admin: {
       type: Boolean,
       default: false
+    },
+    key: {
+      type: String,
+      default: () => v4()
     }
   })
 );

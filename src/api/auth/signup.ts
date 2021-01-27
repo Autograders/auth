@@ -5,7 +5,6 @@ import constants from '../../constants';
 import passwordComplexity from 'joi-password-complexity';
 
 import { User } from '../../models';
-import { sendEmail } from '../../email';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -107,19 +106,9 @@ async function sendVerificationEmail(req: Request, res: Response) {
   try {
     const { id, email } = req.body;
     const data = { id, email };
-    const token = jwt.sign(data, constants.JWT_VERIFY_SECRET, {
-      expiresIn: constants.VERIFY_TOKEN_TIME
-    });
-    sendEmail({
-      to: email,
-      subject: 'Verify your email',
-      template: 'verify',
-      data: {
-        email,
-        url: `http://localhost:5000/api/auth/verify/${token}`
-      }
-    });
-    res.status(200).json({ message: `User with id '${id}' created successfully` });
+    const token = jwt.sign(data, constants.JWT_VERIFY_SECRET, { expiresIn: constants.VERIFY_TOKEN_TIME });
+    const url = `${constants.API}/auth/verify/${token}`;
+    res.status(200).json({ message: `User with id '${id}' created successfully`, url });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error, try again' });
   }

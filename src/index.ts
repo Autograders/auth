@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import constants from './constants';
@@ -38,6 +39,7 @@ async function start() {
     // create Express application
     const app = express();
     // apply middleware
+    app.use(cors({ credentials: true, origin: '*' }));
     app.use(compresion());
     app.use(cookieParser());
     app.use(express.json());

@@ -7,6 +7,12 @@ export default {
   EMAIL_DOMAIN: '@galileo.edu',
   /** no-reply email */
   NOREPLY_EMAIL: 'noreply@autograders.org',
+  /** Is production flag */
+  IS_PROD: process.env.NODE_ENV === 'production',
+  /** Domain*/
+  DOMAIN: process.env.NODE_ENV === 'production' ? '.autograders.org' : 'http://localhost:3000',
+  /** API domain */
+  API: process.env.NODE_ENV === 'production' ? 'https://api.autograders.org' : 'http://localhost:5000',
   /** Password complexity */
   PASSWORD_COMPLEXITY: {
     min: 8,
@@ -26,9 +32,7 @@ export default {
   /** Access token expiration time */
   TOKEN_TIME: '15m',
   /** Refresh token time */
-  REFRESH_TOKEN_TIME: '2h',
-  /** Refresh token time (keep me signed) */
-  REFRESH_TOKEN_TIME_EXT: '2d',
+  REFRESH_TOKEN_TIME: '2d',
   /** Verify token time */
-  VERIFY_TOKEN_TIME: '2d'
+  VERIFY_TOKEN_TIME: '1d'
 };
