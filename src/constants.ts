@@ -1,6 +1,15 @@
+import path from 'path';
+import pino from 'pino';
+
 export default {
-  /** Application Port */
-  APP_PORT: 5000,
+  /** Application root logger */
+  LOGGER: pino(pino.destination({ dest: 'autograders.log' })),
+  /** Application HTTP Port */
+  APP_PORT: process.env.NODE_ENV === 'production' ? 8043 : 8080,
+  /** Application SSL key */
+  APP_SSL_KEY: path.join(__dirname, '..', 'ssl', 'autograders.key'),
+  /** Application SSL crt */
+  APP_SSL_CRT: path.join(__dirname, '..', 'ssl', 'autograders.crt'),
   /** Databse URL */
   DB_URL: process.env.DB_URL as string,
   /** Email domain */
