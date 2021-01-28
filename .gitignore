@@ -1,3 +1,7 @@
+# SSL files
+*.crt
+*.key
+
 # Logs
 logs
 *.log
