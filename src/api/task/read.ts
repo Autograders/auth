@@ -15,7 +15,7 @@ async function checkTask(req: Request, res: Response, next: NextFunction) {
   try {
     const { taskId } = req.params;
     if (taskId && !(await Task.findOne({ taskId }))) {
-      res.status(400).json({ message: `Task with id '${taskId}' does not already exists` });
+      res.status(400).json({ message: `Task with id '${taskId}' does not exists` });
     } else {
       next();
     }

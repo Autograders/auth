@@ -3,7 +3,7 @@ import constants from '../../constants';
 import middleware from '../../middleware';
 import fileUpload from 'express-fileupload';
 
-import { Submit, Task, User } from '../../models';
+import { Grade, Task, User } from '../../models';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -33,24 +33,24 @@ function uploadFile(params: S3.PutObjectRequest): Promise<boolean> {
  * @param next - Next function
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
-  if (!req.files?.submit) {
-    req.body.submit = req.files?.submit;
-    res.status(400).json({ message: 'Submit file not provided' });
+  if (!req.files?.task) {
+    req.body.task = req.files?.task;
+    res.status(400).json({ message: 'Task file not provided' });
   } else {
     next();
   }
 }
 
 /**
- * Checks submit.
+ * Checks grade.
  *
  * @param req  - Request object
  * @param res  - Response object
  * @param next - Next function
  */
-async function checkSubmit(req: Request, res: Response, next: NextFunction) {
+async function checkGrade(req: Request, res: Response, next: NextFunction) {
   try {
-    const submit = req.files?.submit as fileUpload.UploadedFile;
+    const submit = req.files?.task as fileUpload.UploadedFile;
     const fileName = submit.name.split('.')[0].trim();
     const [taskId, userId] = fileName.split('-');
     // check if tasks exists
@@ -66,15 +66,15 @@ async function checkSubmit(req: Request, res: Response, next: NextFunction) {
       return;
     }
     // check max tries
-    const submits = await Submit.find({ userId, taskId });
-    if (submits && submits.length >= task.maxTries) {
+    const grades = await Grade.find({ userId, taskId });
+    if (grades && grades.length >= task.maxTries) {
       res.status(400).json({ message: `Max tries exceeded` });
       return;
     }
     // check if task already queued
-    const queued = await Submit.findOne({ userId, taskId, queued: true });
+    const queued = await Grade.findOne({ userId, taskId, queued: true });
     if (queued) {
-      res.status(400).json({ message: `A submission for task id '${taskId}' is already queued.` });
+      res.status(400).json({ message: `Task id '${taskId}' is already queued.` });
       return;
     }
     req.body.taskId = taskId;
@@ -95,7 +95,7 @@ async function checkSubmit(req: Request, res: Response, next: NextFunction) {
  */
 async function saveFile(req: Request, res: Response, next: NextFunction) {
   try {
-    const file = req.files?.submit as fileUpload.UploadedFile;
+    const file = req.files?.task as fileUpload.UploadedFile;
     const fileName = file.name.trim();
     await uploadFile({
       Bucket: constants.AWS_S3_BUCKET_NAME,
@@ -110,29 +110,29 @@ async function saveFile(req: Request, res: Response, next: NextFunction) {
 }
 
 /**
- * Creates submit and saves it in DB.
+ * Creates grade and saves it in DB.
  *
  * @param req - Request object
  * @param res - Response object
  */
-async function createSubmit(req: Request, res: Response) {
+async function createGrade(req: Request, res: Response) {
   try {
     const { taskId, userId } = req.body;
     // create user
-    const submit = new Submit();
-    submit.userId = userId;
-    submit.taskId = taskId;
-    submit.queued = true;
-    submit.grade = 0;
-    submit.details = [];
-    submit.stderr = '';
-    submit.stdout = '';
-    await submit.save();
-    res.status(200).json({ message: `Submit with id '${submit.id}' queued successfully` });
+    const grade = new Grade();
+    grade.userId = userId;
+    grade.taskId = taskId;
+    grade.queued = true;
+    grade.grade = 0;
+    grade.details = [];
+    grade.stderr = '';
+    grade.stdout = '';
+    await grade.save();
+    res.status(200).json({ message: `Submit with id '${grade.id}' queued successfully` });
   } catch (error) {
     constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
 
-export default [...middleware.checkAuthenticated, fileUpload(), validate, checkSubmit, saveFile, createSubmit];
+export default [...middleware.checkAuthenticated, fileUpload(), validate, checkGrade, saveFile, createGrade];

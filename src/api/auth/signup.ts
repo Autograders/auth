@@ -112,7 +112,8 @@ async function sendVerificationEmail(req: Request, res: Response) {
     const data = { id, email };
     const token = jwt.sign(data, constants.JWT_VERIFY_SECRET, { expiresIn: constants.VERIFY_TOKEN_TIME });
     const url = `${urls.API}/auth/verify/${token}`;
-    res.status(200).json({ message: `User with id '${id}' created successfully`, url });
+    req.body.url = url;
+    res.status(200).json({ message: `User with id '${id}' created successfully` });
   } catch (error) {
     constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });

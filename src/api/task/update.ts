@@ -68,6 +68,7 @@ async function updateTask(req: Request, res: Response) {
     task.taskName = taskName;
     task.maxTries = maxTries;
     task.files = files;
+    task.updatedAt = new Date();
     await task.save();
     res.status(200).json({ message: `Task with id '${taskId}' updated successfully` });
   } catch (error) {
