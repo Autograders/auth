@@ -15,7 +15,7 @@ import compresion from 'compression';
 import cookieParser from 'cookie-parser';
 
 import { StoppableServer } from 'stoppable';
-import { auth, aws, task, submit } from './api';
+import { auth, task, submit } from './api';
 
 /** HTTP/S server */
 let server: StoppableServer;
@@ -76,7 +76,6 @@ async function start() {
     app.use(express.text());
     app.use(morgan('combined'));
     // add API to Express app
-    app.use('/aws', aws);
     app.use('/auth', auth);
     app.use('/task', task);
     app.use('/submit', submit);
