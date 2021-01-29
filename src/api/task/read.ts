@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import middleware from '../../middleware';
 
 import { Task } from '../../models';
@@ -19,6 +20,7 @@ async function checkTask(req: Request, res: Response, next: NextFunction) {
       next();
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try agin' });
   }
 }
@@ -38,6 +40,7 @@ async function getTasks(req: Request, res: Response) {
       res.status(200).json({ tasks: await Task.find() });
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }

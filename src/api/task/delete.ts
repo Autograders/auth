@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import constants from '../../constants';
 import middleware from '../../middleware';
 
 import { Task } from '../../models';
@@ -45,6 +46,7 @@ async function checkTask(req: Request, res: Response, next: NextFunction) {
       next();
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try agin' });
   }
 }
@@ -61,6 +63,7 @@ async function deleteTask(req: Request, res: Response) {
     await Task.deleteOne({ taskId });
     res.status(200).json({ message: `Task with id '${taskId}' deleted successfully` });
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
