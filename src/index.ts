@@ -14,8 +14,8 @@ import constants from './constants';
 import compresion from 'compression';
 import cookieParser from 'cookie-parser';
 
+import { auth, task } from './api';
 import { StoppableServer } from 'stoppable';
-import { auth, task, submit } from './api';
 
 /** HTTP/S server */
 let server: StoppableServer;
@@ -78,7 +78,6 @@ async function start() {
     // add API to Express app
     app.use('/auth', auth);
     app.use('/task', task);
-    app.use('/submit', submit);
     // create http server
     server = getServer(app);
     // start server
