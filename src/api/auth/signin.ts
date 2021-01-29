@@ -57,6 +57,7 @@ async function checkUser(req: Request, res: Response, next: NextFunction) {
       next();
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try agin' });
   }
 }
@@ -76,6 +77,7 @@ async function checkPassword(req: Request, res: Response, next: NextFunction) {
       res.status(400).json({ message: 'Invalid password' });
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
@@ -99,6 +101,7 @@ async function createTokens(req: Request, res: Response) {
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.status(200).json({ access_token: token });
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }

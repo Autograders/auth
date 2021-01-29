@@ -54,6 +54,7 @@ async function checkUser(req: Request, res: Response, next: NextFunction) {
       next();
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try agin' });
   }
 }
@@ -70,6 +71,7 @@ async function hashPassword(req: Request, res: Response, next: NextFunction) {
     req.body.password = await argon2.hash(req.body.password);
     next();
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
@@ -93,6 +95,7 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     req.body.id = user.id;
     next();
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
@@ -111,6 +114,7 @@ async function sendVerificationEmail(req: Request, res: Response) {
     const url = `${urls.API}/auth/verify/${token}`;
     res.status(200).json({ message: `User with id '${id}' created successfully`, url });
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }

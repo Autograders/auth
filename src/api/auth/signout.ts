@@ -13,15 +13,11 @@ import { NextFunction, Request, Response } from 'express';
  * @param next - Next function
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (!req.cookies.refresh_token) {
-      res.clearCookie('refresh_token');
-      res.status(200).json({ message: 'Sign out successfully' });
-    } else {
-      next();
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error, try again' });
+  if (!req.cookies || !req.cookies.refresh_token) {
+    res.clearCookie('refresh_token');
+    res.status(200).json({ message: 'Sign out successfully' });
+  } else {
+    next();
   }
 }
 
@@ -39,6 +35,7 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
     req.body.id = data.id;
     next();
   } catch (error) {
+    constants.LOGGER.error(error);
     res.clearCookie('refresh_token');
     res.status(200).json({ message: 'Sign out successfully' });
   }
@@ -63,6 +60,7 @@ async function signOut(req: Request, res: Response) {
     res.clearCookie('refresh_token');
     res.status(200).json({ message: 'Sign out successfully' });
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }

@@ -37,6 +37,7 @@ async function verify(req: Request, res: Response) {
     await user.save();
     res.status(200).redirect(urls.SIGN_IN);
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(200).redirect(urls.SOMETHING_WENT_WRONG);
   }
 }

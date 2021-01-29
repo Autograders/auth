@@ -12,14 +12,10 @@ import { NextFunction, Request, Response } from 'express';
  * @param next - Next function
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (!req.cookies.refresh_token) {
-      res.sendStatus(401);
-    } else {
-      next();
-    }
-  } catch (error) {
-    res.sendStatus(403);
+  if (!req.cookies || !req.cookies.refresh_token) {
+    res.sendStatus(401);
+  } else {
+    next();
   }
 }
 
@@ -44,6 +40,7 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
       next();
     }
   } catch (error) {
+    constants.LOGGER.error(error);
     res.clearCookie('refresh_token');
     res.sendStatus(403);
   }
@@ -64,6 +61,7 @@ async function refreshToken(req: Request, res: Response) {
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.status(200).json({ access_token: token });
   } catch (error) {
+    constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
