@@ -8,6 +8,8 @@ export interface GradeDetail {
   name: string;
   /** Detail grade */
   grade: number;
+  /** Detail message */
+  message: string;
 }
 
 /**
@@ -64,6 +66,10 @@ export const Grade = mongoose.model<IGrade>(
         },
         grade: {
           type: Number,
+          required: true
+        },
+        message: {
+          type: String,
           required: true
         }
       }

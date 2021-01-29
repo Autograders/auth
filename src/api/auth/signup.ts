@@ -6,6 +6,7 @@ import constants from '../../constants';
 import passwordComplexity from 'joi-password-complexity';
 
 import { User } from '../../models';
+import { sendEmail } from '../../email';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -112,7 +113,7 @@ async function sendVerificationEmail(req: Request, res: Response) {
     const data = { id, email };
     const token = jwt.sign(data, constants.JWT_VERIFY_SECRET, { expiresIn: constants.VERIFY_TOKEN_TIME });
     const url = `${urls.API}/auth/verify/${token}`;
-    req.body.url = url;
+    await sendEmail(email, 'Verify your Autograders.org email', url);
     res.status(200).json({ message: `User with id '${id}' created successfully` });
   } catch (error) {
     constants.LOGGER.error(error);
