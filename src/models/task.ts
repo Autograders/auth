@@ -10,6 +10,8 @@ export interface ITask extends mongoose.Document {
   taskName: string;
   /** Task max tries */
   maxTries: number;
+  /** Task files */
+  files: string[];
 }
 
 /**
@@ -30,6 +32,12 @@ export const Task = mongoose.model<ITask>(
     maxTries: {
       type: Number,
       required: true
-    }
+    },
+    files: [
+      {
+        type: String,
+        required: true
+      }
+    ]
   })
 );

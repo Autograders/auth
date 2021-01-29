@@ -12,7 +12,8 @@ const schema = Joi.object({
   user: Joi.object().required(),
   taskId: Joi.string().required(),
   taskName: Joi.string().min(3).max(255).required(),
-  maxTries: Joi.number().min(3).max(30).required()
+  maxTries: Joi.number().min(3).max(30).required(),
+  files: Joi.array().items(Joi.string().min(3).max(255)).min(1).required()
 }).required();
 
 /**
@@ -63,9 +64,10 @@ async function checkTask(req: Request, res: Response, next: NextFunction) {
 async function updateTask(req: Request, res: Response) {
   try {
     const task = req.body.task as ITask;
-    const { taskId, taskName, maxTries } = req.body;
+    const { taskId, taskName, maxTries, files } = req.body;
     task.taskName = taskName;
     task.maxTries = maxTries;
+    task.files = files;
     await task.save();
     res.status(200).json({ message: `Task with id '${taskId}' updated successfully` });
   } catch (error) {
