@@ -20,8 +20,6 @@ export interface ISubmit extends mongoose.Document {
   taskId: string;
   /** If submit is already queued */
   queued: boolean;
-  /** If submit is ready to be evaluated */
-  ready: boolean;
   /** Submit grade */
   grade: number;
   /** Submit details */
@@ -49,10 +47,6 @@ export const Submit = mongoose.model<ISubmit>(
     queued: {
       type: Boolean,
       default: true
-    },
-    ready: {
-      type: Boolean,
-      default: false
     },
     grade: {
       type: Number,
