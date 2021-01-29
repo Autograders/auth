@@ -12,6 +12,10 @@ export interface ITask extends mongoose.Document {
   maxTries: number;
   /** Task files */
   files: string[];
+  /** Task created at */
+  createdAt: Date;
+  /** Task updated at */
+  updatedAt: Date;
 }
 
 /**
@@ -38,6 +42,14 @@ export const Task = mongoose.model<ITask>(
         type: String,
         required: true
       }
-    ]
+    ],
+    createdAt: {
+      type: Date,
+      default: () => new Date()
+    },
+    updatedAt: {
+      type: Date,
+      default: () => new Date()
+    }
   })
 );

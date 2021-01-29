@@ -18,6 +18,10 @@ export interface IUser extends mongoose.Document {
   admin: boolean;
   /** User current auth key */
   key: string;
+  /** User created at */
+  createdAt: Date;
+  /** User updated at */
+  updatedAt: Date;
 }
 
 /**
@@ -49,6 +53,14 @@ export const User = mongoose.model<IUser>(
     key: {
       type: String,
       default: () => v4()
+    },
+    createdAt: {
+      type: Date,
+      default: () => new Date()
+    },
+    updatedAt: {
+      type: Date,
+      default: () => new Date()
     }
   })
 );

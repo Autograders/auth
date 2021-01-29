@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 /**
- * Submit details interface.
+ * Grade detail interface.
  */
-export interface SubmitDetail {
+export interface GradeDetail {
   /** Detail name */
   name: string;
   /** Detail grade */
@@ -11,9 +11,9 @@ export interface SubmitDetail {
 }
 
 /**
- * Submit interface.
+ * Grade interface.
  */
-export interface ISubmit extends mongoose.Document {
+export interface IGrade extends mongoose.Document {
   /** User identifier */
   userId: string;
   /** Task identifier */
@@ -23,18 +23,22 @@ export interface ISubmit extends mongoose.Document {
   /** Submit grade */
   grade: number;
   /** Submit details */
-  details: SubmitDetail[];
+  details: GradeDetail[];
   /** Submit stdout */
   stdout: string;
   /** Submit stderr */
   stderr: string;
+  /** Submit created at */
+  createdAt: Date;
+  /** Submit updated at */
+  updatedAt: Date;
 }
 
 /**
- * Submit model.
+ * Grade model.
  */
-export const Submit = mongoose.model<ISubmit>(
-  'Submit',
+export const Grade = mongoose.model<IGrade>(
+  'Grade',
   new mongoose.Schema({
     userId: {
       type: String,
@@ -71,6 +75,14 @@ export const Submit = mongoose.model<ISubmit>(
     stdout: {
       type: String,
       default: ''
+    },
+    createdAt: {
+      type: Date,
+      default: () => new Date()
+    },
+    updatedAt: {
+      type: Date,
+      default: () => new Date()
     }
   })
 );
