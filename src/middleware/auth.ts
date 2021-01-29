@@ -12,14 +12,10 @@ import { NextFunction, Request, Response } from 'express';
  * @param next - Next function
  */
 async function validate(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (!req.headers.authorization) {
-      res.sendStatus(401);
-    } else {
-      next();
-    }
-  } catch (error) {
-    res.sendStatus(403);
+  if (!req.headers.authorization) {
+    res.status(401).json({ message: 'Authorization header not provided' });
+  } else {
+    next();
   }
 }
 
@@ -33,17 +29,23 @@ async function validate(req: Request, res: Response, next: NextFunction) {
 async function checkToken(req: Request, res: Response, next: NextFunction) {
   try {
     const authorization = req.headers.authorization as string;
-    const data = jwt.verify(authorization, constants.JWT_SECRET) as any;
+    let data;
+    try {
+      data = jwt.verify(authorization, constants.JWT_SECRET) as any;
+    } catch (error) {
+      res.status(403).json({ message: 'Token expired' });
+      return;
+    }
     const { id, key } = data;
     const user = await User.findById(id);
     if (!user || user.key !== key) {
-      res.sendStatus(403);
+      res.status(403).json({ message: 'Token expired' });
     } else {
       req.body.user = user;
       next();
     }
   } catch (error) {
-    res.sendStatus(403);
+    res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
 
@@ -55,15 +57,11 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
  * @param next - Next function
  */
 async function isAdmin(req: Request, res: Response, next: NextFunction) {
-  try {
-    const admin = req.body.user.admin;
-    if (!admin) {
-      res.sendStatus(403);
-    } else {
-      next();
-    }
-  } catch (error) {
-    res.sendStatus(403);
+  const admin = req.body.user.admin;
+  if (!admin) {
+    res.status(403).json({ message: 'Not an admin user' });
+  } else {
+    next();
   }
 }
 
