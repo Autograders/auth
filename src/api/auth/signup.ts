@@ -5,8 +5,8 @@ import jwt from 'jsonwebtoken';
 import constants from '../../constants';
 import passwordComplexity from 'joi-password-complexity';
 
-import { User } from '../../models';
-import { sendEmail } from '../../email';
+import { IUser, User } from '../../models';
+import { sendWelcomeEmail } from '../../email';
 import { NextFunction, Request, Response } from 'express';
 
 /**
@@ -94,6 +94,7 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     user.password = password;
     await user.save();
     req.body.id = user.id;
+    req.body.user = user;
     next();
   } catch (error) {
     constants.LOGGER.error(error);
@@ -113,9 +114,11 @@ async function sendVerificationEmail(req: Request, res: Response) {
     const data = { id, email };
     const token = jwt.sign(data, constants.JWT_VERIFY_SECRET, { expiresIn: constants.VERIFY_TOKEN_TIME });
     const url = `${urls.API}/auth/verify/${token}`;
-    await sendEmail(email, 'Verify your Autograders.org email', url);
+    await sendWelcomeEmail(email, url);
     res.status(200).json({ message: `User with id '${id}' created successfully` });
   } catch (error) {
+    const user = req.body.user as IUser;
+    await user.delete();
     constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
   }

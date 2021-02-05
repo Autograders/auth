@@ -1,62 +1,52 @@
+import ejs from 'ejs';
+import path from 'path';
 import nodemailer from 'nodemailer';
-import constants from './constants';
-
-import { Auth } from 'googleapis';
 
 /**
- * OAuth2 client
+ * Privateemail mail transport
  */
-const oauth2Client = new Auth.OAuth2Client({
-  clientId: process.env.GMAIL_CLIENT,
-  clientSecret: process.env.GMAIL_SECRET,
-  redirectUri: process.env.GMAIL_REDIRECT_URI
+const transport = nodemailer.createTransport({
+  host: 'mail.privateemail.com',
+  secure: false,
+  port: 587,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
 });
 
-oauth2Client.setCredentials({ refresh_token: process.env.GMAIL_TOKEN });
-
 /**
- * Gets OAuth2 access token
+ * Renders an EJS email template.
+ *
+ * @param template Template name
  */
-function getAccessToken(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    oauth2Client
-      .getAccessToken()
-      .then((value) => {
-        resolve(value.token || '');
-      })
-      .catch(() => {
-        reject('Could Not Get Access Token');
-      });
+function renderTemplate(template: string, data: any, text: boolean = false): Promise<string> {
+  const extension = text ? '.txt' : '.ejs';
+  return new Promise<string>((resolve, reject) => {
+    const p = path.join(__dirname, 'templates', `${template}${extension}`);
+    ejs.renderFile(p, data, (error, rendered) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(rendered);
+      }
+    });
   });
 }
 
 /**
- * Sends an email.
+ * Sends welcome email.
  *
- * @param to      - Recipient
- * @param subject - Email subject
- * @param email   - Email data
+ * @param email - Recipient
+ * @param url   - Redirect URL
  */
-export async function sendEmail(to: string, subject: string, text: string) {
-  try {
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: process.env.GMAIL_USER,
-        clientId: process.env.GMAIL_CLIENT,
-        clientSecret: process.env.GMAIL_SECRET,
-        refreshToken: process.env.GMAIL_TOKEN,
-        accessToken: await getAccessToken()
-      }
-    });
-    transport.sendMail({
-      from: constants.NOREPLY_EMAIL,
-      to,
-      subject,
-      text
-    });
-  } catch (error) {
-    // Ignore errors
-  }
+export async function sendWelcomeEmail(email: string, url: string) {
+  const data = { email, url };
+  transport.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Verify your email for Autograders.org',
+    html: await renderTemplate('welcome', data),
+    text: await renderTemplate('welcome', data, true)
+  });
 }

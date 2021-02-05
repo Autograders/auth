@@ -12,18 +12,12 @@ export default {
   APP_SSL_CRT: path.join(__dirname, '..', 'ssl', 'autograders.crt'),
   /** Databse URL */
   DB_URL: process.env.DB_URL as string,
-  /** AWS S3 bucket ARN */
-  AWS_S3_ARN: process.env.AWS_S3_ARN as string,
   /** AWS S3 bucket name */
   AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME as string,
   /** Email domain */
   EMAIL_DOMAIN: '@galileo.edu',
-  /** no-reply email */
-  NOREPLY_EMAIL: 'noreply@autograders.org',
   /** Is production flag */
   IS_PROD: process.env.NODE_ENV === 'production',
-  /** Domain*/
-  DOMAIN: process.env.NODE_ENV === 'production' ? '.autograders.org' : 'http://localhost:3000',
   /** Password complexity */
   PASSWORD_COMPLEXITY: {
     min: 8,

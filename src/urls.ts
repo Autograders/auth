@@ -8,5 +8,5 @@ export default {
   /** Verify url */
   VERIFY: '',
   /** API url */
-  API: process.env.NODE_ENV === 'production' ? 'https://api.autograders.org' : 'http://localhost:5000'
+  API: process.env.NODE_ENV === 'production' ? 'https://api.autograders.org' : 'http://localhost:8080'
 };
