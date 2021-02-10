@@ -61,6 +61,7 @@ async function signOut(req: Request, res: Response) {
     res.status(200).json({ message: 'Sign out successfully' });
   } catch (error) {
     constants.LOGGER.error(error);
+    res.clearCookie('refresh_token');
     res.status(500).json({ message: 'Internal server error, try again' });
   }
 }
