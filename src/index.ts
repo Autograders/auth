@@ -69,7 +69,7 @@ async function start() {
     // create Express application
     const app = express();
     // apply middleware
-    app.use(cors({ credentials: true, origin: '*' }));
+    app.use(cors({ credentials: true, origin: constants.ORIGIN }));
     app.use(compresion());
     app.use(cookieParser());
     app.use(express.json());

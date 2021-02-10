@@ -4,6 +4,8 @@ import pino from 'pino';
 export default {
   /** Application root logger */
   LOGGER: pino(pino.destination({ dest: 'autograders.log' })),
+  /** Origin */
+  ORIGIN: process.env.NODE_ENV === 'production' ? '.autograders.org' : 'http://localhost:3000',
   /** Application HTTP Port */
   APP_PORT: process.env.NODE_ENV === 'production' ? 8043 : 8080,
   /** Application SSL key */
