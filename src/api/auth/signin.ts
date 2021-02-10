@@ -91,7 +91,9 @@ async function checkPassword(req: Request, res: Response, next: NextFunction) {
 async function createTokens(req: Request, res: Response) {
   try {
     const user = req.body.user as IUser;
+    const fullName = user.fullName;
     const email = req.body.email as string;
+    const admin = user.admin;
     const id = user.id;
     const data = { id, email, key: user.key };
     // create jwts
@@ -99,7 +101,7 @@ async function createTokens(req: Request, res: Response) {
     const refreshToken = jwt.sign(data, constants.JWT_REFRESH_SECRET, { expiresIn: constants.REFRESH_TOKEN_TIME });
     // set refresh token cookie
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    res.status(200).json({ id, access_token: token });
+    res.status(200).json({ id, email, fullName, admin, access_token: token });
   } catch (error) {
     constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });

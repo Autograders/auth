@@ -55,11 +55,15 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
 async function refreshToken(req: Request, res: Response) {
   try {
     const user = req.body.user as IUser;
-    const data = { id: user.id, email: user.email, key: user.key };
+    const id = user.id;
+    const email = user.email;
+    const fullName = user.fullName;
+    const admin = user.admin;
+    const data = { id, email, key: user.key };
     const token = jwt.sign(data, constants.JWT_SECRET, { expiresIn: constants.TOKEN_TIME });
     const refreshToken = jwt.sign(data, constants.JWT_REFRESH_SECRET, { expiresIn: constants.REFRESH_TOKEN_TIME });
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    res.status(200).json({ access_token: token });
+    res.status(200).json({ id, email, fullName, admin, access_token: token });
   } catch (error) {
     constants.LOGGER.error(error);
     res.status(500).json({ message: 'Internal server error, try again' });
