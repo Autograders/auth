@@ -2,6 +2,9 @@ import { Forbidden } from '@errors';
 import { IUser } from '@models/user';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 
+/**
+ * Admin role guard.
+ */
 @Injectable()
 export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
