@@ -3,6 +3,7 @@ import { getUTC } from '@utils';
 import { verify } from 'argon2';
 import { sign } from 'jsonwebtoken';
 import { SignInDto } from './dto/signin';
+import { SignOutDto } from './dto/signout';
 import { IUser, UserModel } from '@models/user';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ACCESS_TOKEN_TIME, JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_TOKEN_TIME } from '@constants';
@@ -15,7 +16,7 @@ export class AuthService {
   /**
    * Signs in a user.
    *
-   * @param data - Sign in dat
+   * @param data - Sign in data
    */
   async signIn(data: SignInDto) {
     const { email, password } = data;
@@ -72,11 +73,11 @@ export class AuthService {
   /**
    * Signs out a user.
    *
-   * @param allDevices - Sign out from all devices
-   * @param user       - User entity
+   * @param data - Sign out data.
+   * @param user - User entity
    */
-  async signOut(allDevices: boolean, user: IUser) {
-    if (allDevices) {
+  async signOut(data: SignOutDto, user: IUser) {
+    if (data.allDevices) {
       user.key = v4();
       user.updatedAt = getUTC();
       await user.save();

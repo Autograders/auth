@@ -3,8 +3,9 @@ import { IUser } from '@models/user';
 import { AuthService } from './service';
 import { SignInDto } from './dto/signin';
 import { User } from '@common/decorators';
+import { SignOutDto } from './dto/signout';
 import { IS_PROD, REFRESH_COOKIE } from '@constants';
-import { Body, Controller, Post, Res, Query } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 
 /**
  * Auth controller.
@@ -63,12 +64,8 @@ export class AuthController {
    * @param res        - Response controller
    */
   @Post('/signout')
-  async signOut(
-    @Query('allDevices') allDevices: boolean = false,
-    @User() user: IUser,
-    @Res({ passthrough: true }) res: Response
-  ) {
-    await this.authService.signOut(allDevices, user);
+  async signOut(@Body() data: SignOutDto, @User() user: IUser, @Res({ passthrough: true }) res: Response) {
+    await this.authService.signOut(data, user);
     res.clearCookie(REFRESH_COOKIE);
     return { message: 'Sign out successfully' };
   }
