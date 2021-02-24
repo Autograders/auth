@@ -1,36 +1,16 @@
 import { sendPin } from '@email';
-import { Model } from 'mongoose';
-import { Pin, PinDocument } from './schema';
+import { PinModel } from '@models/pin';
+import { UserModel } from '@models/user';
 import { VerifyPinDto } from './dto/verify';
 import { CreatePinDto } from './dto/create';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '@modules/user/schema';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InvalidPin, UserDoesNotExists } from '@errors';
 
 /**
  * Pin service
  */
 @Injectable()
 export class PinService {
-  /** Pin model */
-  private readonly pinModel: Model<PinDocument>;
-  /** User model */
-  private readonly userModel: Model<UserDocument>;
-
-  /**
-   * Creates a new pin service
-   *
-   * @param pinModel  - Pin model
-   * @param userModel - User model
-   */
-  constructor(
-    @InjectModel(Pin.name) pinModel: Model<PinDocument>,
-    @InjectModel(User.name) userModel: Model<UserDocument>
-  ) {
-    this.pinModel = pinModel;
-    this.userModel = userModel;
-  }
-
   /**
    * Creates pin for user.
    *
@@ -39,16 +19,10 @@ export class PinService {
   async create(data: CreatePinDto) {
     const { email } = data;
     // check if user exists
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new BadRequestException({
-        message: `User '${email}' does not exists`,
-        statusCode: 400,
-        code: 'USER_DOESNT_EXISTS'
-      });
-    }
+    const user = await UserModel.findOne({ email });
+    if (!user) throw new UserDoesNotExists(email);
     // create pin
-    const pin = new this.pinModel();
+    const pin = new PinModel();
     pin.email = email;
     await pin.save();
     // send pin to email
@@ -63,23 +37,11 @@ export class PinService {
   async verify(data: VerifyPinDto) {
     const { email, code } = data;
     // check if user exists
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new BadRequestException({
-        message: `User '${email}' does not exists`,
-        statusCode: 400,
-        code: 'USER_DOESNT_EXISTS'
-      });
-    }
+    const user = await UserModel.findOne({ email });
+    if (!user) throw new UserDoesNotExists(email);
     // check if pin exists
-    const pin = await this.pinModel.findOne({ email, code });
-    if (!pin) {
-      throw new BadRequestException({
-        message: `Invalid or expired pin '${code}'`,
-        statusCode: 400,
-        code: 'INVALID_PIN'
-      });
-    }
+    const pin = await PinModel.findOne({ email, code });
+    if (!pin) throw new InvalidPin(code);
     // remove pin
     await pin.remove();
   }

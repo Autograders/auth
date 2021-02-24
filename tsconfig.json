@@ -24,10 +24,13 @@
     "paths": {
       "@utils": ["src/utils"],
       "@email": ["src/email"],
+      "@errors": ["src/errors"],
+      "@models/*": ["src/models/*"],
+      "@common/*": ["src/common/*"],
       "@constants": ["src/constants"],
       "@modules/*": ["src/modules/*"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts", "./src/**/*.txt", "./src/**/*.ejs"]
+  "include": ["./src/**/*.ts"]
 }

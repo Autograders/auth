@@ -1,11 +1,11 @@
 import { hash } from 'argon2';
 import { sendPin } from '@email';
-import { Model } from 'mongoose';
+import { PinModel } from '@models/pin';
+import { startSession } from 'mongoose';
+import { UserModel } from '@models/user';
 import { VerifyUserDto } from './dto/verify';
 import { CreateUserDto } from './dto/create';
-import { User, UserDocument } from './schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Pin, PinDocument } from '@modules/pin/schema';
+import { InvalidPin, UserDoesNotExists } from '@errors';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 /**
@@ -13,25 +13,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class UserService {
-  /** Pin model */
-  private readonly pinModel: Model<PinDocument>;
-  /** User model */
-  private readonly userModel: Model<UserDocument>;
-
-  /**
-   * Creates a new user service
-   *
-   * @param pinModel  - Pin model
-   * @param userModel - User model
-   */
-  constructor(
-    @InjectModel(Pin.name) pinModel: Model<PinDocument>,
-    @InjectModel(User.name) userModel: Model<UserDocument>
-  ) {
-    this.pinModel = pinModel;
-    this.userModel = userModel;
-  }
-
   /**
    * Creates user.
    *
@@ -40,7 +21,7 @@ export class UserService {
   async create(data: CreateUserDto) {
     const { fullName, email, password } = data;
     // check if user already exists
-    if (await this.userModel.exists({ email })) {
+    if (await UserModel.exists({ email })) {
       throw new BadRequestException({
         message: `User '${email}' already exists`,
         statusCode: 400,
@@ -50,16 +31,16 @@ export class UserService {
     // hash password
     const hashedPassword = await hash(password);
     // start transaction
-    const session = await this.userModel.db.startSession();
+    const session = await UserModel.db.startSession();
     session.startTransaction();
     // create user
-    const user = new this.userModel();
+    const user = new UserModel();
     user.fullName = fullName;
     user.email = email;
     user.password = hashedPassword;
     await user.save({ session });
     // create pin
-    const pin = new this.pinModel();
+    const pin = new PinModel();
     pin.email = email;
     await pin.save({ session });
     // commit
@@ -78,25 +59,13 @@ export class UserService {
   async verify(data: VerifyUserDto) {
     const { email, code } = data;
     // check if user exists
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new BadRequestException({
-        message: `User '${email}' does not exists`,
-        statusCode: 400,
-        code: 'USER_DOESNT_EXISTS'
-      });
-    }
+    const user = await UserModel.findOne({ email });
+    if (!user) throw new UserDoesNotExists(email);
     // check if pin exists
-    const pin = await this.pinModel.findOne({ email, code });
-    if (!pin) {
-      throw new BadRequestException({
-        message: `Invalid or expired pin '${code}'`,
-        statusCode: 400,
-        code: 'INVALID_PIN'
-      });
-    }
+    const pin = await PinModel.findOne({ email, code });
+    if (!pin) throw new InvalidPin(code);
     // start transaction
-    const session = await this.userModel.db.startSession();
+    const session = await startSession();
     session.startTransaction();
     // update user
     user.verified = true;
