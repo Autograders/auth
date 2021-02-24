@@ -1,7 +1,7 @@
 import { AuthService } from './service';
 import { AuthController } from './controller';
-import { AuthMiddleware } from '@common/middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ClaimsMiddleware, RefreshMiddleware } from '@common/middleware';
 
 @Module({
   controllers: [AuthController],
@@ -9,6 +9,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('auth/refresh', 'auth/signout');
+    consumer.apply(ClaimsMiddleware).forRoutes('auth/signout');
+    consumer.apply(RefreshMiddleware).forRoutes('auth/refresh');
   }
 }
