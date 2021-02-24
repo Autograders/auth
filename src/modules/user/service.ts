@@ -35,7 +35,7 @@ export class UserService {
   /**
    * Creates user.
    *
-   * @param data - Create user payload
+   * @param data - Create user data
    */
   async create(data: CreateUserDto) {
     const { fullName, email, password } = data;

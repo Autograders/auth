@@ -34,7 +34,7 @@ export class PinService {
   /**
    * Creates pin for user.
    *
-   * @param data - Create pin payload
+   * @param data - Create pin data
    */
   async create(data: CreatePinDto) {
     const { email } = data;
