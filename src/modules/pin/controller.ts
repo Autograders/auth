@@ -29,7 +29,7 @@ export class PinController {
   async create(@Body() data: CreatePinDto) {
     await this.pinService.create(data);
     return {
-      message: `Pin send successfully to '${data.email}'`
+      message: `Pin successfully sent to '${data.email}'`
     };
   }
 
@@ -42,7 +42,7 @@ export class PinController {
   async verify(@Body() data: VerifyPinDto) {
     await this.pinService.verify(data);
     return {
-      message: `Pin '${data.code}' for '${data.email}' verified`
+      message: `Pin '${data.code}' for '${data.email}' verified successfully`
     };
   }
 }

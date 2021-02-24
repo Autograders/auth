@@ -42,7 +42,7 @@ export class UserController {
   async verify(@Body() data: VerifyUserDto) {
     await this.userService.verify(data);
     return {
-      message: `User '${data.email}' verified`
+      message: `User '${data.email}' verified successfully`
     };
   }
 }
