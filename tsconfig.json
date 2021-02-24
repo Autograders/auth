@@ -22,7 +22,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@email/*": ["src/email/*"],
+      "@utils": ["src/utils"],
+      "@email": ["src/email"],
       "@constants": ["src/constants"],
       "@modules/*": ["src/modules/*"]
     }
