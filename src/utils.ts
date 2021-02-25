@@ -42,14 +42,3 @@ export function renderTemplate(path: string, data: any): Promise<string> {
     });
   });
 }
-
-/**
- * Validates if the given token has a proper structure.
- *
- * @param token - Bearer token
- */
-export function validateTokenStructure(token: string | undefined | null) {
-  if (typeof token !== 'string' || token === '') return false;
-  if (!token.toLocaleLowerCase().startsWith('bearer ')) return false;
-  return true;
-}

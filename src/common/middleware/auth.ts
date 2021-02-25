@@ -1,6 +1,5 @@
 import { verify } from 'jsonwebtoken';
 import { UserModel } from '@models/user';
-import { validateTokenStructure } from '@utils';
 import { Forbidden, Unauthorized } from '@errors';
 import { Request, Response, NextFunction } from 'express';
 import { Injectable, NestMiddleware } from '@nestjs/common';
@@ -14,13 +13,11 @@ export class ClaimsMiddleware implements NestMiddleware {
   async use(req: Request, _: Response, next: NextFunction) {
     const { authorization } = req.headers;
     // check if authorization header exists
-    if (!validateTokenStructure(authorization)) throw new Unauthorized();
-    // get jwt token
-    const token = (authorization as string).split(' ')[1].trim();
+    if (typeof authorization !== 'string' || authorization === '') throw new Unauthorized();
     // check access token
     let id, key;
     try {
-      ({ id, key } = verify(token, JWT_SECRET) as any);
+      ({ id, key } = verify(authorization, JWT_SECRET) as any);
     } catch (error) {
       throw new Unauthorized();
     }
