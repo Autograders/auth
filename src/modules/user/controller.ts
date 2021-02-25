@@ -1,7 +1,7 @@
 import { UserService } from './service';
 import { CreateUserDto } from './dto/create';
-import { Body, Controller, Post } from '@nestjs/common';
 import { VerifyUserDto } from './dto/verify';
+import { Body, Controller, Post } from '@nestjs/common';
 
 /**
  * User controller.
