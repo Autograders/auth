@@ -25,6 +25,9 @@ export const REFRESH_COOKIE = process.env.REFRESH_COOKIE as string;
 /** Email domain */
 export const EMAIL_DOMAIN = process.env.EMAIL_DOMAIN as string;
 
+/** S3 bucket name */
+export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME as string;
+
 /** Pin length */
 export const PIN_LENGTH = 6;
 

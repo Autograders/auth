@@ -1,5 +1,25 @@
+import S3 from 'aws-sdk/clients/s3';
+
 import { renderFile } from 'ejs';
-import { PIN_LENGTH } from '@constants';
+import { PIN_LENGTH, AWS_S3_BUCKET_NAME } from '@constants';
+
+/** S3 client */
+export const s3 = new S3();
+
+/**
+ * Uploads file to S3 bucket.
+ *
+ * @param filename - File name
+ * @param data     - File data
+ */
+export function uploadFile(filename: string, data: any): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    s3.upload({ Bucket: AWS_S3_BUCKET_NAME, Key: filename, Body: data }, (error: Error) => {
+      if (error) reject(error);
+      else resolve(true);
+    });
+  });
+}
 
 /**
  * Generates a random pin code.
