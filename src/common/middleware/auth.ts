@@ -1,8 +1,8 @@
 import { verify } from 'jsonwebtoken';
 import { UserModel } from '@models/user';
-import { Forbidden, Unauthorized } from '@errors';
 import { Request, Response, NextFunction } from 'express';
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Forbidden, Unauthorized } from '@common/exceptions';
 import { JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_COOKIE } from '@constants';
 
 /**

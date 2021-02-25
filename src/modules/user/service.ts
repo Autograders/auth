@@ -5,7 +5,8 @@ import { startSession } from 'mongoose';
 import { UserModel } from '@models/user';
 import { VerifyUserDto } from './dto/verify';
 import { CreateUserDto } from './dto/create';
-import { InvalidPin, UserDoesNotExists } from '@errors';
+import { UserDoesNotExists } from './exceptions';
+import { InvalidPin } from '@modules/pin/exceptions';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 /**

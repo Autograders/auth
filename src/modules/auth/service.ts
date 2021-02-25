@@ -5,8 +5,10 @@ import { Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { SignInDto } from './dto/signin';
 import { SignOutDto } from './dto/signout';
+import { Injectable } from '@nestjs/common';
 import { IUser, UserModel } from '@models/user';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { UserDoesNotExists } from '@modules/user/exceptions';
+import { UserNotVerified, InvalidCredentials } from './exceptions';
 
 import {
   ACCESS_TOKEN_TIME,
@@ -32,29 +34,11 @@ export class AuthService {
     const { email, password } = data;
     // check if user exists
     const user = await UserModel.findOne({ email });
-    if (!user) {
-      throw new BadRequestException({
-        message: `User '${email}' does not exists`,
-        statusCode: 400,
-        code: 'USER_DOESNT_EXISTS'
-      });
-    }
+    if (!user) throw new UserDoesNotExists(email);
     // check if user is verified
-    if (!user.verified) {
-      throw new BadRequestException({
-        message: `User '${email}' is not verified`,
-        statusCode: 400,
-        code: 'USER_NOT_VERIFIED'
-      });
-    }
+    if (!user.verified) throw new UserNotVerified(email);
     // check user password
-    if (!(await verify(user.password, password))) {
-      throw new BadRequestException({
-        message: 'Invalid log in credentials',
-        statusCode: 400,
-        code: 'INVALID_CREDENTIALS'
-      });
-    }
+    if (!(await verify(user.password, password))) throw new InvalidCredentials();
     // unpack user info
     const { id, fullName, admin, key, lastLoginTime, createdAt } = user;
     // set last login

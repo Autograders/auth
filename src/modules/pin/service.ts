@@ -1,10 +1,11 @@
 import { sendPin } from '@email';
 import { PinModel } from '@models/pin';
 import { UserModel } from '@models/user';
+import { InvalidPin } from './exceptions';
 import { VerifyPinDto } from './dto/verify';
 import { CreatePinDto } from './dto/create';
 import { Injectable } from '@nestjs/common';
-import { InvalidPin, UserDoesNotExists } from '@errors';
+import { UserDoesNotExists } from '@modules/user/exceptions';
 
 /**
  * Pin service

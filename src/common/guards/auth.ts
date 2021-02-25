@@ -1,5 +1,5 @@
-import { Forbidden } from '@errors';
 import { IUser } from '@models/user';
+import { Forbidden } from '@common/exceptions';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 
 /**

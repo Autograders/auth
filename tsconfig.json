@@ -24,10 +24,9 @@
     "paths": {
       "@utils": ["src/utils"],
       "@email": ["src/email"],
-      "@errors": ["src/errors"],
+      "@constants": ["src/constants"],
       "@models/*": ["src/models/*"],
       "@common/*": ["src/common/*"],
-      "@constants": ["src/constants"],
       "@modules/*": ["src/modules/*"]
     }
   },
