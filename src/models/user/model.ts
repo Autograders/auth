@@ -4,7 +4,7 @@ import { IUser } from './interface';
 import { model, Schema } from 'mongoose';
 
 /**
- * User schema.
+ * User model.
  */
 export const UserModel = model<IUser>(
   'User',

@@ -3,7 +3,7 @@ import { model, Schema } from 'mongoose';
 import { generatePin, getUTC } from '@utils';
 
 /**
- * Pin schema.
+ * Pin model.
  */
 export const PinModel = model<IPin>(
   'Pin',
