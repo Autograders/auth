@@ -1,16 +1,16 @@
 import { utc } from 'moment';
 import { renderFile } from 'ejs';
+import { PIN_LENGTH } from '@constants';
 
 /**
  * Generates a random pin code.
  *
- * @param length - Pin length
  * @returns Random pin code
  */
-export function generatePin(length: number = 6): string {
+export function generatePin(): string {
   const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < PIN_LENGTH; i++) {
     const index = Math.floor(Math.random() * alphabet.length);
     code += alphabet.charAt(index);
   }

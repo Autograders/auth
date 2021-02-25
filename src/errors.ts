@@ -1,3 +1,5 @@
+import { ValidationError } from 'class-validator';
+
 import {
   BadRequestException,
   ForbiddenException,
@@ -85,6 +87,29 @@ export class Forbidden extends ForbiddenException {
       message: 'Forbidden',
       status: 403,
       faultcode: 'USER_WITHOUT_PERMISSIONS'
+    });
+  }
+}
+
+/**
+ * Invalid payload error.
+ */
+export class InvalidPayload extends BadRequestException {
+  /**
+   * Creates a new invalid payload exception.
+   *
+   * @param property    - Property name
+   * @param constraints - Property contraints
+   */
+  constructor(errors: ValidationError[]) {
+    super({
+      message: 'Invalid payload',
+      status: 400,
+      faultcode: 'INVALID_PAYLOAD',
+      details: errors.map((error) => ({
+        property: error.property,
+        errors: Object.keys(error.constraints as any)
+      }))
     });
   }
 }

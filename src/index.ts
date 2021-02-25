@@ -8,10 +8,12 @@ import cookieParser from 'cookie-parser';
 
 import { readFileSync } from 'fs';
 import { AppModule } from '@modules/app';
+import { InvalidPayload } from '@errors';
 import { NestFactory } from '@nestjs/core';
 import { connect, connection } from 'mongoose';
-import { INestApplication } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 import { APP_ORIGIN, APP_PORT, IS_PROD } from '@constants';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 /**
  * Creates a DB connection.
@@ -60,6 +62,12 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(morgan('combined'));
   app.enableCors({ origin: APP_ORIGIN, credentials: true });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      exceptionFactory: (errors: ValidationError[]) => new InvalidPayload(errors)
+    })
+  );
   await app.listen(APP_PORT);
 }
 

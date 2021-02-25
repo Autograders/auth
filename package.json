@@ -20,6 +20,8 @@
     "@nestjs/schedule": "^0.4.2",
     "argon2": "^0.27.1",
     "aws-sdk": "^2.841.0",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "dotenv-safe": "^8.2.0",
