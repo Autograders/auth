@@ -7,7 +7,6 @@ import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nes
  * Task controlller.
  */
 @Controller('task')
-@UseGuards(AdminGuard)
 export class TaskController {
   /** Task service */
   private readonly taskService!: TaskService;
@@ -27,6 +26,7 @@ export class TaskController {
    * @param data - Create task payload
    */
   @Post()
+  @UseGuards(AdminGuard)
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.taskService.create(createTaskDto);
   }
@@ -56,6 +56,7 @@ export class TaskController {
    * @param updateTaskDto - Update task payload
    */
   @Put(':id')
+  @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updateTaskDto: CreateTaskDto) {
     return this.taskService.update(id, updateTaskDto);
   }
@@ -66,6 +67,7 @@ export class TaskController {
    * @param id - Task identifier
    */
   @Delete(':id')
+  @UseGuards(AdminGuard)
   remove(@Param('id') id: string) {
     return this.taskService.remove(id);
   }
@@ -74,6 +76,7 @@ export class TaskController {
    * Remove all tasks endpoint.
    */
   @Delete()
+  @UseGuards(AdminGuard)
   removeAll() {
     return this.taskService.removeAll();
   }
