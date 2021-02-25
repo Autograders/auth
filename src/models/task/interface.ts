@@ -4,20 +4,17 @@ import { Document } from 'mongoose';
  * Task entity.
  */
 export interface ITask extends Document {
-  /** Task id */
-  taskId: string;
-
   /** Task name */
-  taskName: string;
+  name: string;
 
   /** Task max tries */
-  maxTries: number;
+  tries: number;
 
   /** Task files */
   files: string[];
 
   /** Task due date */
-  dueDate: Date;
+  due: Date;
 
   /** Task created at */
   createdAt: Date;

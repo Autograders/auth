@@ -5,19 +5,14 @@ import { model, Schema } from 'mongoose';
 /**
  * Task model.
  */
-export const Task = model<ITask>(
+export const TaskModel = model<ITask>(
   'Task',
   new Schema({
-    taskId: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    taskName: {
+    name: {
       type: String,
       required: true
     },
-    maxTries: {
+    tries: {
       type: Number,
       required: true
     },
@@ -27,7 +22,7 @@ export const Task = model<ITask>(
         required: true
       }
     ],
-    dueDate: {
+    due: {
       type: Date,
       required: true
     },
