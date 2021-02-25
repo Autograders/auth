@@ -48,7 +48,7 @@ export class UserService {
     // send pin to email
     await sendPin(email, pin.code);
     session.endSession();
-    return user.id;
+    return { id: user.id, message: `User '${email}' created successfully` };
   }
 
   /**
@@ -75,5 +75,6 @@ export class UserService {
     // commit
     await session.commitTransaction();
     session.endSession();
+    return { message: `User '${email}' verified successfully` };
   }
 }

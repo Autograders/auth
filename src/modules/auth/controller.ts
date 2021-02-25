@@ -4,7 +4,6 @@ import { AuthService } from './service';
 import { SignInDto } from './dto/signin';
 import { User } from '@common/decorators';
 import { SignOutDto } from './dto/signout';
-import { IS_PROD, REFRESH_COOKIE } from '@constants';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 
 /**
@@ -31,14 +30,8 @@ export class AuthController {
    * @param res  - Response controller
    */
   @Post('/signin')
-  async signIn(@Body() data: SignInDto, @Res({ passthrough: true }) res: Response) {
-    const signInData = await this.authService.signIn(data);
-    res.cookie(REFRESH_COOKIE, signInData.refresh_token, { httpOnly: true, sameSite: IS_PROD, secure: IS_PROD });
-    return {
-      message: `User '${data.email}' signed in successfully`,
-      user_attributes: signInData.user_attributes,
-      access_token: signInData.access_token
-    };
+  signIn(@Body() data: SignInDto, @Res({ passthrough: true }) res: Response) {
+    return this.authService.signIn(data, res);
   }
 
   /**
@@ -48,12 +41,8 @@ export class AuthController {
    * @param res  - Response controller
    */
   @Post('/refresh')
-  async refresh(@User() user: IUser, @Res({ passthrough: true }) res: Response) {
-    const tokens = await this.authService.refresh(user);
-    res.cookie(REFRESH_COOKIE, tokens.refresh_token, { httpOnly: true, sameSite: IS_PROD, secure: IS_PROD });
-    return {
-      access_token: tokens.access_token
-    };
+  refresh(@User() user: IUser, @Res({ passthrough: true }) res: Response) {
+    return this.authService.refresh(user, res);
   }
 
   /**
@@ -64,9 +53,7 @@ export class AuthController {
    * @param res        - Response controller
    */
   @Post('/signout')
-  async signOut(@Body() data: SignOutDto, @User() user: IUser, @Res({ passthrough: true }) res: Response) {
-    await this.authService.signOut(data, user);
-    res.clearCookie(REFRESH_COOKIE);
-    return { message: 'Sign out successfully' };
+  signOut(@Body() data: SignOutDto, @User() user: IUser, @Res({ passthrough: true }) res: Response) {
+    return this.authService.signOut(data, user, res);
   }
 }

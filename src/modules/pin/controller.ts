@@ -26,11 +26,8 @@ export class PinController {
    * @param data - Create pin payload
    */
   @Post()
-  async create(@Body() data: CreatePinDto) {
-    await this.pinService.create(data);
-    return {
-      message: `Pin successfully sent to '${data.email}'`
-    };
+  create(@Body() data: CreatePinDto) {
+    return this.pinService.create(data);
   }
 
   /**
@@ -39,10 +36,7 @@ export class PinController {
    * @param data - Verify user payload
    */
   @Post('/verify')
-  async verify(@Body() data: VerifyPinDto) {
-    await this.pinService.verify(data);
-    return {
-      message: `Pin '${data.code}' for '${data.email}' verified successfully`
-    };
+  verify(@Body() data: VerifyPinDto) {
+    return this.pinService.verify(data);
   }
 }

@@ -26,11 +26,8 @@ export class UserController {
    * @param data - Create user payload
    */
   @Post()
-  async create(@Body() data: CreateUserDto) {
-    return {
-      id: await this.userService.create(data),
-      message: `User '${data.email}' created successfully`
-    };
+  create(@Body() data: CreateUserDto) {
+    return this.userService.create(data);
   }
 
   /**
@@ -39,10 +36,7 @@ export class UserController {
    * @param data - Verify user payload
    */
   @Post('/verify')
-  async verify(@Body() data: VerifyUserDto) {
-    await this.userService.verify(data);
-    return {
-      message: `User '${data.email}' verified successfully`
-    };
+  verify(@Body() data: VerifyUserDto) {
+    return this.userService.verify(data);
   }
 }

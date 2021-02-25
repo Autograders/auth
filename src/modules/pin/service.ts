@@ -27,6 +27,7 @@ export class PinService {
     await pin.save();
     // send pin to email
     await sendPin(email, pin.code);
+    return { message: `Pin successfully sent to '${email}'` };
   }
 
   /**
@@ -44,5 +45,6 @@ export class PinService {
     if (!pin) throw new InvalidPin(code);
     // remove pin
     await pin.remove();
+    return { message: `Pin '${code}' for '${email}' verified successfully` };
   }
 }
