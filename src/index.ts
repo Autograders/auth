@@ -8,10 +8,10 @@ import cookieParser from 'cookie-parser';
 
 import { readFileSync } from 'fs';
 import { AppModule } from '@modules/app';
-import { InvalidPayload } from '@errors';
 import { NestFactory } from '@nestjs/core';
 import { connect, connection } from 'mongoose';
 import { ValidationError } from 'class-validator';
+import { InvalidPayload } from '@common/exceptions';
 import { APP_ORIGIN, APP_PORT, IS_PROD } from '@constants';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
