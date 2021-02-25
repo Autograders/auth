@@ -1,9 +1,20 @@
 import { verify } from 'jsonwebtoken';
-import { UserModel } from '@models/user';
+import { IUser, UserModel } from '@models/user';
 import { Request, Response, NextFunction } from 'express';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Forbidden, Unauthorized } from '@common/exceptions';
 import { JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_COOKIE } from '@constants';
+
+/**
+ * Extend Express Request interface
+ */
+declare global {
+  namespace Express {
+    interface Request {
+      user: IUser;
+    }
+  }
+}
 
 /**
  * Authentication middleware with claims token (bearer authorization header).
@@ -25,7 +36,7 @@ export class ClaimsMiddleware implements NestMiddleware {
     const user = await UserModel.findById(id);
     if (!user || user.key !== key) throw new Forbidden();
     // attach user info
-    req.body.user = user;
+    req.user = user;
     next();
   }
 }
@@ -54,7 +65,7 @@ export class RefreshMiddleware implements NestMiddleware {
       throw new Forbidden();
     }
     // attach user info
-    req.body.user = user;
+    req.user = user;
     next();
   }
 }
