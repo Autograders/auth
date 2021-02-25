@@ -1,4 +1,3 @@
-import { utc } from 'moment';
 import { renderFile } from 'ejs';
 import { PIN_LENGTH } from '@constants';
 
@@ -20,10 +19,22 @@ export function generatePin(): string {
 /**
  * Gets UTC date.
  *
+ * @param from - From date
  * @returns UTC date
  */
-export function getUTC() {
-  return utc().toDate();
+export function getUTC(from?: string) {
+  if (from) {
+    const date = new Date(from);
+    return new Date(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    );
+  }
+  return new Date();
 }
 
 /**
