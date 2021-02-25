@@ -1,6 +1,4 @@
-import { Document } from 'mongoose';
-import { IUser } from '@models/user';
-import { ITask } from '@models/task';
+import { Document, Schema } from 'mongoose';
 
 /**
  * Grade detail interface.
@@ -19,9 +17,9 @@ export interface GradeDetail {
  */
 export interface ISubmit extends Document {
   /** Grade owner */
-  user: IUser;
+  user: Schema.Types.ObjectId;
   /** Task */
-  task: ITask;
+  task: Schema.Types.ObjectId;
   /** If submit is queued */
   queued: boolean;
   /** Submit total grade */
