@@ -5,8 +5,6 @@ import { startSession } from 'mongoose';
 import { UserModel } from '@models/user';
 import { VerifyUserDto } from './dto/verify';
 import { CreateUserDto } from './dto/create';
-import { UserDoesNotExists } from './exceptions';
-import { InvalidPin } from '@modules/pin/exceptions';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 /**
@@ -22,17 +20,11 @@ export class UserService {
   async create(data: CreateUserDto) {
     const { fullName, email, password } = data;
     // check if user already exists
-    if (await UserModel.exists({ email })) {
-      throw new BadRequestException({
-        message: `User '${email}' already exists`,
-        statusCode: 400,
-        code: 'USER_ALREADY_EXISTS'
-      });
-    }
+    if (await UserModel.exists({ email })) throw new BadRequestException(`User '${email}' already exists`);
     // hash password
     const hashedPassword = await hash(password);
     // start transaction
-    const session = await UserModel.db.startSession();
+    const session = await startSession();
     session.startTransaction();
     // create user
     const user = new UserModel();
@@ -61,10 +53,10 @@ export class UserService {
     const { email, code } = data;
     // check if user exists
     const user = await UserModel.findOne({ email });
-    if (!user) throw new UserDoesNotExists(email);
+    if (!user) throw new BadRequestException(`User '${email}' does not exists`);
     // check if pin exists
     const pin = await PinModel.findOne({ email, code });
-    if (!pin) throw new InvalidPin(code);
+    if (!pin) throw new BadRequestException(`Invalid or expired pin '${code}'`);
     // start transaction
     const session = await startSession();
     session.startTransaction();

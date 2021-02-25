@@ -1,7 +1,6 @@
 import { getUTC } from '@utils';
 import { TaskModel } from '@models/task';
 import { CreateTaskDto } from './dto/create';
-import { InvalidTaskId } from './exceptions';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -43,7 +42,7 @@ export class TaskService {
    */
   async findOne(id: string) {
     const task = await TaskModel.findById(id).exec();
-    if (!task) throw new InvalidTaskId(id);
+    if (!task) throw new BadRequestException(`Invalid task id '${id}'`);
     return {
       id: task.id,
       name: task.name,
@@ -63,7 +62,7 @@ export class TaskService {
    */
   async update(id: string, data: CreateTaskDto) {
     const task = await TaskModel.findById(id).exec();
-    if (!task) throw new InvalidTaskId(id);
+    if (!task) throw new BadRequestException(`Invalid task id '${id}'`);
     task.name = data.name;
     task.tries = data.tries;
     task.files = data.files;
@@ -80,7 +79,7 @@ export class TaskService {
    */
   async remove(id: string) {
     const task = await TaskModel.findById(id).exec();
-    if (!task) throw new BadRequestException();
+    if (!task) throw new BadRequestException(`Invalid task id '${id}'`);
     await task.remove();
     return { message: `Task with id '${id}' deleted successfully` };
   }

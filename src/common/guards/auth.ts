@@ -1,4 +1,3 @@
-import { Forbidden } from '@common/exceptions';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 
 /**
@@ -8,7 +7,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
-    if (!req.user.admin) throw new Forbidden();
+    if (!req.user.admin) return false;
     return true;
   }
 }

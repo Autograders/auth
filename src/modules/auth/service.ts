@@ -5,10 +5,8 @@ import { Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { SignInDto } from './dto/signin';
 import { SignOutDto } from './dto/signout';
-import { Injectable } from '@nestjs/common';
 import { IUser, UserModel } from '@models/user';
-import { UserDoesNotExists } from '@modules/user/exceptions';
-import { UserNotVerified, InvalidCredentials } from './exceptions';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import {
   ACCESS_TOKEN_TIME,
@@ -34,11 +32,11 @@ export class AuthService {
     const { email, password } = data;
     // check if user exists
     const user = await UserModel.findOne({ email });
-    if (!user) throw new UserDoesNotExists(email);
+    if (!user) throw new BadRequestException(`User '${email}' does not exists`);
     // check if user is verified
-    if (!user.verified) throw new UserNotVerified(email);
+    if (!user.verified) throw new BadRequestException(`User '${email}' is not verifeid`);
     // check user password
-    if (!(await verify(user.password, password))) throw new InvalidCredentials();
+    if (!(await verify(user.password, password))) throw new BadRequestException(`Invalid password`);
     // unpack user info
     const { id, fullName, admin, key, lastLoginTime, createdAt } = user;
     // set last login

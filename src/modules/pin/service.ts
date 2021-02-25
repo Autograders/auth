@@ -1,11 +1,9 @@
 import { sendPin } from '@email';
 import { PinModel } from '@models/pin';
 import { UserModel } from '@models/user';
-import { InvalidPin } from './exceptions';
 import { VerifyPinDto } from './dto/verify';
 import { CreatePinDto } from './dto/create';
-import { Injectable } from '@nestjs/common';
-import { UserDoesNotExists } from '@modules/user/exceptions';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 /**
  * Pin service
@@ -21,7 +19,7 @@ export class PinService {
     const { email } = data;
     // check if user exists
     const user = await UserModel.findOne({ email });
-    if (!user) throw new UserDoesNotExists(email);
+    if (!user) throw new BadRequestException(`User '${email}' does not exists`);
     // create pin
     const pin = new PinModel();
     pin.email = email;
@@ -40,10 +38,10 @@ export class PinService {
     const { email, code } = data;
     // check if user exists
     const user = await UserModel.findOne({ email });
-    if (!user) throw new UserDoesNotExists(email);
+    if (!user) throw new BadRequestException(`User '${email}' does not exists`);
     // check if pin exists
     const pin = await PinModel.findOne({ email, code });
-    if (!pin) throw new InvalidPin(code);
+    if (!pin) throw new BadRequestException(`Invalid or expired pin '${code}'`);
     // remove pin
     await pin.remove();
     return { message: `Pin '${code}' for '${email}' verified successfully` };
