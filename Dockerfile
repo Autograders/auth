@@ -13,10 +13,13 @@ ADD --chown=node:node . .
 USER node
 
 # build application
-RUN yarn && NODE_ENV=production yarn build && yarn cache clean && rm -rf src tsconfig.json
+RUN yarn && \
+    yarn build && \
+    yarn cache clean && \
+    cp -r src/email/templates dist/email && \
+    rm -rf src tsconfig.json
 
 # app port
 EXPOSE 8080
-EXPOSE 8043
 
 CMD [ "node", "."]
