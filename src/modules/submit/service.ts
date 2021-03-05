@@ -78,7 +78,7 @@ export class SubmitService {
     const task = await TaskModel.findById(id).exec();
     if (!task) throw new BadRequestException(`Invalid task id '${id}'`);
     // check submits
-    const last = await SubmitModel.findOne({ task: task._id, user: user._id });
+    const last = await SubmitModel.findOne({ task: task._id, user: user._id }).sort({ createdAt: -1 }).exec();
     if (!last) throw new BadRequestException(`No submits available for task id '${id}'`);
     return {
       id: last.id,
