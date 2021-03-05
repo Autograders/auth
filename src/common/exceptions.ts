@@ -15,7 +15,6 @@ export class InvalidPayload extends BadRequestException {
     super({
       message: 'Invalid payload',
       statusCode: 400,
-      faultcode: 'INVALID_PAYLOAD',
       errors: errors.map((error) => ({
         property: error.property,
         errors: Object.keys(error.constraints as any)

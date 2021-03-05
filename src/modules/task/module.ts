@@ -1,7 +1,7 @@
 import { TaskService } from './service';
 import { TaskController } from './controller';
 import { ClaimsMiddleware } from '@common/middleware';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 
 @Module({
   controllers: [TaskController],
@@ -9,6 +9,6 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 })
 export class TaskModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ClaimsMiddleware).forRoutes(TaskController);
+    consumer.apply(ClaimsMiddleware).exclude({ path: 'task/:id', method: RequestMethod.GET }).forRoutes(TaskController);
   }
 }

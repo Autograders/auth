@@ -57,6 +57,7 @@ export class SubmitService {
       (e) => ({
         id: e.id,
         grade: e.grade,
+        queued: e.queued,
         stderr: e.stderr,
         stdout: e.stdout,
         details: e.details,
@@ -82,6 +83,7 @@ export class SubmitService {
     return {
       id: last.id,
       grade: last.grade,
+      queued: last.queued,
       stderr: last.stderr,
       stdout: last.stdout,
       details: last.details,
