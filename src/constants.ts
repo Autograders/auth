@@ -32,4 +32,4 @@ export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME as string;
 export const PIN_LENGTH = 6;
 
 /** Password regex */
-export const PASSWORD_RGX = /^(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.*[a-z]).{8,128}$/;
+export const PASSWORD_RGX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
